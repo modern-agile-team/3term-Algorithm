@@ -20,32 +20,29 @@ const input2 = input[1].split(" ");
 
 function solution(input1, input2) {
   const k = input1[1];
-
   const result = quickSort(input2);
-  console.log(result);
-  // return result[k];
+
+  return result[k - 1];
 }
 
 function quickSort(num) {
-  const pivot = [num[0]];
+  if (!num.length) {
+    return [];
+  }
+
+  const pivot = num[0];
   const min = [];
   const max = [];
 
-  if (!min) {
-    return num;
-  }
-
   for (let i = 1; i < num.length; i++) {
-    if (num[i] < pivot[0]) {
+    if (num[i] < pivot) {
       min.push(num[i]);
-    } else if (num[i] > pivot[0]) {
+    } else if (num[i] > pivot) {
       max.push(num[i]);
-    } else {
-      pivot.push(num[i]);
     }
   }
 
-  return quickSort(min.concat(pivot, max));
+  return quickSort(min).concat(pivot, quickSort(max));
 }
 
 console.log(solution(input1, input2));
