@@ -12,37 +12,84 @@
 A를 정렬했을 때, 앞에서부터 K번째 있는 수를 출력한다.
 */
 
-const fs = require("fs");
 const filePath = process.platform === "linux" ? "/dev/stdin" : "./input.txt";
-let input = fs.readFileSync(filePath).toString().split("\n");
-const input1 = input[0].split(" ");
-const input2 = input[1].split(" ");
+let input = require("fs").readFileSync(filePath).toString().split("\n");
 
-function solution(input1, input2) {
-  const k = input1[1];
-  const result = quickSort(input2);
+// K번째 수 최종 정답, 퀵 선택 알고리즘을 채택해서 사용
+function solution(input) {
+  const k = input[0].split(" ");
+  const arr = input[1].split(" ");
+  const result = quick(arr.map((item) => Number(item)));
 
-  return result[k - 1];
+  return result[k[1] - 1];
 }
 
-function quickSort(num) {
-  if (!num.length) {
-    return [];
+function quick(arr, left = 0, right = arr.length - 1) {
+  const mid = parseInt((left + right) / 2);
+  const pivot = arr[mid];
+  const newLeft = divide(arr, left, right, pivot);
+
+  if (left >= right) {
+    return;
   }
 
-  const pivot = num[0];
-  const min = [];
-  const max = [];
+  quick(arr, newLeft, right);
+  quick(arr, left, newLeft - 1);
 
-  for (let i = 1; i < num.length; i++) {
-    if (num[i] < pivot) {
-      min.push(num[i]);
-    } else if (num[i] > pivot) {
-      max.push(num[i]);
+  return arr;
+}
+
+function divide(arr, left, right, pivot) {
+  while (left <= right) {
+    while (arr[left] < pivot) {
+      left++;
+    }
+    while (pivot < arr[right]) {
+      right--;
+    }
+
+    if (left <= right) {
+      [arr[left], arr[right]] = [arr[right], arr[left]];
+      left++;
+      right--;
     }
   }
 
-  return quickSort(min).concat(pivot, quickSort(max));
+  return left;
 }
 
-console.log(solution(input1, input2));
+console.log(solution(input));
+
+// 처음 풀이한 코드, 메모리 초과로 실패
+function solution(input) {
+  const k = input[0].split(" ");
+  const result = quickSort(arr[1].split(" "));
+
+  return result[k[1] - 1];
+}
+
+function quickSort(arr) {
+  console.log("arr", arr);
+  if (!arr.length) {
+    return [];
+  }
+
+  const pivot = arr[0];
+  const min = [];
+  const max = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] < pivot) {
+      min.push(arr[i]);
+    } else if (arr[i] > pivot) {
+      max.push(arr[i]);
+    }
+  }
+
+  const minSorted = quickSort(min);
+  const maxSorted = quickSort(max);
+
+  return [...minSorted, pivot, ...maxSorted];
+}
+
+console.log(solution(input));
